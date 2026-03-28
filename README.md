@@ -12,7 +12,7 @@ CODE_ORGANIZATION: code-sena
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Jaminton2007&label=Profile%20views&style=flat-square&color=brightgreen" alt="Profile views">
   <br>
-  <img src="github-stats.svg" alt="GitHub Stats">
+  <img src="https://raw.githubusercontent.com/Jaminton2007/Jaminton2007/stats/github-stats.svg" alt="GitHub Stats">
 </p>
 
 ---
