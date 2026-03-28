@@ -10,8 +10,8 @@ CODE_ORGANIZATION: code-sena
 <h1 align="center">Jaminton Yeir Peña Guarnica</h1>
 <h3 align="center">ADSO-3413974</h3>
 <p align="center">
+  <img src="https://img.shields.io/badge/Location-Neiva,%20Huila,%20Colombia-blue?style=flat-square" alt="Location">
   <img src="https://komarev.com/ghpvc/?username=Jaminton2007&label=Profile%20views&style=flat-square&color=brightgreen" alt="Profile views">
-  <br>
 </p>
 
 ![GitHub Stats](https://github-readme-stats-self-olive.vercel.app/api?username=Jaminton2007&show_icons=true&theme=tokyonight&hide_border=true)
