@@ -1,8 +1,8 @@
-name: Generate GitHub Stats
+name: Generate Custom Stats
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */12 * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,14 +13,31 @@ jobs:
       - name: Descargar repo
         uses: actions/checkout@v4
 
-      - name: Generar stats SVG
+      - name: Generar SVG personalizado
         run: |
-          curl -o github-stats.svg "https://github-readme-stats.vercel.app/api?username=Jaminton2007&show_icons=true&hide_rank=true&theme=algolia"
+          USER="Jaminton2007"
+
+          REPOS=$(curl -s https://api.github.com/users/$USER | jq .public_repos)
+          FOLLOWERS=$(curl -s https://api.github.com/users/$USER | jq .followers)
+
+          cat <<EOF > github-stats.svg
+          <svg width="400" height="120" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .title { font: bold 18px sans-serif; }
+              .text { font: 14px sans-serif; }
+            </style>
+
+            <text x="10" y="25" class="title">GitHub Stats</text>
+            <text x="10" y="55" class="text">User: $USER</text>
+            <text x="10" y="75" class="text">Repos: $REPOS</text>
+            <text x="10" y="95" class="text">Followers: $FOLLOWERS</text>
+          </svg>
+          EOF
 
       - name: Guardar cambios
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add github-stats.svg
-          git commit -m "update stats" || exit 0
+          git commit -m "update custom stats" || exit 0
           git push
