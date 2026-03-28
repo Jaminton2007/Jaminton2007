@@ -1,3 +1,4 @@
+<div align="center">
 <!--
 CONFIG
 FULL_NAME: Jaminton Yeir Peña Guarnica
