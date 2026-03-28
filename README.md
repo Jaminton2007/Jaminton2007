@@ -49,4 +49,13 @@ Soy estudiante del programa ADSO (Análisis y Desarrollo de Software). Actualmen
 ## 🚀 Objetivo
 - Desarrollar habilidades sólidas en programación y participar en proyectos que me permitan crecer profesionalmente en el área del desarrollo de software.
 
-![GitHub Stats](./github-stats.svg)
+cat <<EOF > github-stats.svg
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#0d1117"/>
+
+  <text x="20" y="30" fill="#58a6ff" font-size="18" font-family="Arial">GitHub Stats</text>
+  <text x="20" y="60" fill="#c9d1d9" font-size="14" font-family="Arial">User: $USER</text>
+  <text x="20" y="80" fill="#c9d1d9" font-size="14" font-family="Arial">Repos: $REPOS</text>
+  <text x="20" y="100" fill="#c9d1d9" font-size="14" font-family="Arial">Followers: $FOLLOWERS</text>
+</svg>
+EOF
