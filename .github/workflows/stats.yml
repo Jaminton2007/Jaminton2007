@@ -1,27 +1,10 @@
-name: Generate GitHub Stats
+name: Test
 
 on:
-  schedule:
-    - cron: "0 */12 * * *"
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Descargar repo
-        uses: actions/checkout@v4
-
-      - name: Generar stats SVG
-        run: |
-          curl -o github-stats.svg "https://github-readme-stats.vercel.app/api?username=Jaminton2007&show_icons=true&count_private=true&hide_rank=true&theme=algolia"
-
-      - name: Guardar cambios
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add github-stats.svg
-          git commit -m "update stats" || exit 0
-          git push
-          
+      - run: echo "ok"
