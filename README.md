@@ -48,3 +48,5 @@ Soy estudiante del programa ADSO (Análisis y Desarrollo de Software). Actualmen
 
 ## 🚀 Objetivo
 - Desarrollar habilidades sólidas en programación y participar en proyectos que me permitan crecer profesionalmente en el área del desarrollo de software.
+
+  ![GitHub Stats](./github-stats.svg)
