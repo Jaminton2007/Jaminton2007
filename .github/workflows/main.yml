@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
-a
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,6 +34,4 @@ jobs:
           git config user.email "actions@github.com"
           git add github-stats.svg
           git commit -m "update stats" || exit 0
-          git push
-          git commit -m "update custom stats" || exit 0
           git push
