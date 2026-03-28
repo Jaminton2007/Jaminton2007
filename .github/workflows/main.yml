@@ -46,5 +46,4 @@ jobs:
           git config user.email "actions@github.com"
           git add github-stats.svg
           git commit -m "update stats" || exit 0
-          git pull --rebase
-          git push
+          git push --force
