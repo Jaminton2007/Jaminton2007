@@ -11,6 +11,8 @@ CODE_ORGANIZATION: code-sena
 <h3 align="center">ADSO-3413974</h3>
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Jaminton2007&label=Profile%20views&style=flat-square&color=brightgreen" alt="Profile views">
+  <br>
+  <img src="github-stats.svg" alt="GitHub Stats">
 </p>
 
 ---
