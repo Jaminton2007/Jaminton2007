@@ -1,50 +1,55 @@
-name: Generate Custom SVG
+name: Generate GitHub Stats SVG
 
 on:
-  schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
 
       - name: Generate SVG
         run: |
-          USER="Jaminton2007"
-          REPOS=$(curl -s https://api.github.com/users/$USER | jq .public_repos)
-          FOLLOWERS=$(curl -s https://api.github.com/users/$USER | jq .followers)
-          STARS=$(curl -s "https://api.github.com/users/$USER/repos?per_page=100" | jq '[.[] | .stargazers_count] | add // 0')
-          printf "<svg width='500' height='150' viewBox='0 0 500 150' xmlns='http://www.w3.org/2000/svg'>
-            <defs>
-              <linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'>
-                <stop offset='0%' style='stop-color:#0d1117;stop-opacity:1' />
-                <stop offset='100%' style='stop-color:#161b22;stop-opacity:1' />
-              </linearGradient>
-            </defs>
-            <rect width='100%%' height='100%%' fill='url(#grad)' rx='10'/>
-            <text x='20' y='30' fill='#58a6ff' font-size='20' font-family='Arial, sans-serif' font-weight='bold'>GitHub Stats</text>
-            <text x='20' y='55' fill='#c9d1d9' font-size='16' font-family='Arial, sans-serif'>User: %s</text>
-            <text x='20' y='80' fill='#c9d1d9' font-size='16' font-family='Arial, sans-serif'>Repos: %s</text>
-            <text x='20' y='105' fill='#c9d1d9' font-size='16' font-family='Arial, sans-serif'>Followers: %s</text>
-            <text x='20' y='130' fill='#c9d1d9' font-size='16' font-family='Arial, sans-serif'>Stars: %s</text>
-          </svg>" "$USER" "$REPOS" "$FOLLOWERS" "$STARS" > github-stats.svg
+          # Get repository information
+          REPO_NAME=$(basename $GITHUB_REPOSITORY)
+          OWNER_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+          REPO_URL="https://github.com/$OWNER_NAME/$REPO_NAME"
+
+          # Get repository stats
+          RESPONSE=$(curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/stats")
+          TOTAL_COMMITS=$(echo $RESPONSE | jq '.total | tonumber')
+          TOTAL_PULL_REQUESTS=$(echo $RESPONSE | jq '.pullRequests | .closed | map(.number) | add | tonumber')
+
+          # Generate SVG
+          echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > github-stats.svg
+          echo "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">" >> github-stats.svg
+          echo "<rect width=\"300\" height=\"200\" style=\"fill:rgb(245, 245, 245);\"/>" >> github-stats.svg
+          echo "<text x=\"150\" y=\"50\" font-size=\"24\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">GitHub Stats</text>" >> github-stats.svg
+          echo "<text x=\"150\" y=\"90\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">@$REPO_NAME</text>" >> github-stats.svg
+          echo "<text x=\"150\" y=\"120\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">Total Commits: $TOTAL_COMMITS</text>" >> github-stats.svg
+          echo "<text x=\"150\" y=\"140\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">Total Pull Requests: $TOTAL_PULL_REQUESTS</text>" >> github-stats.svg
+          echo "</svg>" >> github-stats.svg
 
       - name: Commit changes
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git checkout -b stats || git checkout stats
+          git config user.email "github-actions@github.com"
           git add github-stats.svg
-          git commit -m "update stats" || exit 0
-          git push --force origin stats
+          git commit -m "update stats"
+          git push origin main
+
+      - name: Deploy SVG
+        uses: JamesIves/github-pages-deploy-action@v4.2.4
+        with:
+          branch: gh-pages
+          folder: .
