@@ -13,7 +13,8 @@ CODE_ORGANIZATION: code-sena
   <img src="https://komarev.com/ghpvc/?username=Jaminton2007&label=Profile%20views&style=flat-square&color=brightgreen" alt="Profile views">
   <br>
 </p>
-![GitHub Stats](https://github-readme-stats-self-olive.vercel.app/api?username=Jaminton2007&show_icons=true&theme=radical&locale=es)
+
+![GitHub Stats](https://github-readme-stats-self-olive.vercel.app/api?username=Jaminton2007&show_icons=true&theme=tokyonight&hide_border=true)
 
 ---
 
