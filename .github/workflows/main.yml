@@ -1,9 +1,9 @@
 name: Generate GitHub Stats SVG
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: "0 */6 * * *" # cada 6 horas
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,45 +11,43 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Generate SVG
         run: |
-          # Get repository information
-          REPO_NAME=$(basename $GITHUB_REPOSITORY)
-          OWNER_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
-          REPO_URL="https://github.com/$OWNER_NAME/$REPO_NAME"
+          OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+          REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
 
-          # Get repository stats
-          RESPONSE=$(curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/stats")
-          TOTAL_COMMITS=$(echo $RESPONSE | jq '.total | tonumber')
-          TOTAL_PULL_REQUESTS=$(echo $RESPONSE | jq '.pullRequests | .closed | map(.number) | add | tonumber')
+          # Total commits (últimos datos disponibles)
+          COMMITS=$(curl -s https://api.github.com/repos/$OWNER/$REPO/commits | jq 'length')
 
-          # Generate SVG
-          echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > github-stats.svg
-          echo "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">" >> github-stats.svg
-          echo "<rect width=\"300\" height=\"200\" style=\"fill:rgb(245, 245, 245);\"/>" >> github-stats.svg
-          echo "<text x=\"150\" y=\"50\" font-size=\"24\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">GitHub Stats</text>" >> github-stats.svg
-          echo "<text x=\"150\" y=\"90\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">@$REPO_NAME</text>" >> github-stats.svg
-          echo "<text x=\"150\" y=\"120\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">Total Commits: $TOTAL_COMMITS</text>" >> github-stats.svg
-          echo "<text x=\"150\" y=\"140\" font-size=\"18\" text-anchor=\"middle\" fill=\"rgb(77, 77, 77)\">Total Pull Requests: $TOTAL_PULL_REQUESTS</text>" >> github-stats.svg
-          echo "</svg>" >> github-stats.svg
+          # Pull requests cerrados
+          PRS=$(curl -s "https://api.github.com/repos/$OWNER/$REPO/pulls?state=closed" | jq 'length')
+
+          # Crear SVG
+          cat <<EOF > github-stats.svg
+          <svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+            <rect width="100%" height="100%" fill="#f5f5f5"/>
+            <text x="50%" y="40" text-anchor="middle" font-size="20">GitHub Stats</text>
+            <text x="50%" y="80" text-anchor="middle">Repo: $REPO</text>
+            <text x="50%" y="110" text-anchor="middle">Commits: $COMMITS</text>
+            <text x="50%" y="140" text-anchor="middle">PRs cerrados: $PRS</text>
+          </svg>
+          EOF
 
       - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add github-stats.svg
-          git commit -m "update stats"
-          git push origin main
+          git diff --cached --quiet || git commit -m "update stats"
+          git push
 
       - name: Deploy SVG
-        uses: JamesIves/github-pages-deploy-action@v4.2.4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: .
